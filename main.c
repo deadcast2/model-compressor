@@ -12,7 +12,7 @@ struct vector3
 
 struct vertex
 {
-  struct vector3 position, normal;
+  struct vector3 position;
   float tu, tv;
 };
 
@@ -53,11 +53,6 @@ struct vertex *vertices(struct aiMatrix4x4 transform, struct aiMesh *mesh,
       vertex.position.y = transformedVertex.y;
       vertex.position.z = transformedVertex.z;
 
-      struct aiVector3D normal = mesh->mNormals[face.mIndices[j]];
-      vertex.normal.x = normal.x;
-      vertex.normal.y = normal.y;
-      vertex.normal.z = normal.z;
-
       if(mesh->mTextureCoords[0] != NULL)
       {
         vertex.tu = mesh->mTextureCoords[0][face.mIndices[j]].x;
@@ -80,9 +75,8 @@ void process(FILE *file, struct aiNode *node, const struct aiScene *scene)
     struct vertex *verts = vertices(node->mTransformation, mesh, &count);
     for(int j = 0; j < count; j++)
     {
-      fprintf(file, "%f %f %f %f %f %f %f %f\n",
+      fprintf(file, "%f %f %f %f %f\n",
         verts[j].position.x, verts[j].position.y, verts[j].position.z,
-        verts[j].normal.x, verts[j].normal.y, verts[j].normal.z,
         verts[j].tu, verts[j].tv);
     }
     free(verts);
