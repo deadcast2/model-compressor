@@ -5,6 +5,8 @@
 #include <assimp/postprocess.h>
 #include "fastlz.h"
 
+#define SCALE_FACTOR 1000000
+
 struct vector3
 {
   float x, y, z;
@@ -75,9 +77,12 @@ void process(FILE *file, struct aiNode *node, const struct aiScene *scene)
     struct vertex *verts = vertices(node->mTransformation, mesh, &count);
     for(int j = 0; j < count; j++)
     {
-      fprintf(file, "%f %f %f %f %f\n",
-        verts[j].position.x, verts[j].position.y, verts[j].position.z,
-        verts[j].tu, verts[j].tv);
+      fprintf(file, "%x %x %x %x %x\n",
+        (int)(verts[j].position.x * SCALE_FACTOR),
+        (int)(verts[j].position.y * SCALE_FACTOR),
+        (int)(verts[j].position.z * SCALE_FACTOR),
+        (int)(verts[j].tu * SCALE_FACTOR),
+        (int)(verts[j].tv * SCALE_FACTOR));
     }
     free(verts);
   }
