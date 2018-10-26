@@ -15,6 +15,8 @@ struct vector3
 struct vertex
 {
   struct vector3 position;
+  struct vector3 normal;
+  struct vector3 color;
   float tu, tv;
 };
 
@@ -55,6 +57,20 @@ struct vertex *vertices(struct aiMatrix4x4 transform, struct aiMesh *mesh,
       vertex.position.y = transformedVertex.y;
       vertex.position.z = transformedVertex.z;
 
+      if(mesh->mNormals != NULL)
+      {
+        vertex.normal.x = mesh->mNormals[face.mIndices[j]].x;
+        vertex.normal.y = mesh->mNormals[face.mIndices[j]].y;
+        vertex.normal.z = mesh->mNormals[face.mIndices[j]].z;
+      }
+
+      if(mesh->mColors[0] != NULL)
+      {
+        vertex.color.x = mesh->mColors[0][face.mIndices[j]].r;
+        vertex.color.y = mesh->mColors[0][face.mIndices[j]].g;
+        vertex.color.z = mesh->mColors[0][face.mIndices[j]].b;
+      }
+
       if(mesh->mTextureCoords[0] != NULL)
       {
         vertex.tu = mesh->mTextureCoords[0][face.mIndices[j]].x;
@@ -77,10 +93,16 @@ void process(FILE *file, struct aiNode *node, const struct aiScene *scene)
     struct vertex *verts = vertices(node->mTransformation, mesh, &count);
     for(int j = 0; j < count; j++)
     {
-      fprintf(file, "%x %x %x %x %x\n",
+      fprintf(file, "%x %x %x %x %x %x %x %x %x %x %x\n",
         (int)(verts[j].position.x * SCALE_FACTOR),
         (int)(verts[j].position.y * SCALE_FACTOR),
         (int)(verts[j].position.z * SCALE_FACTOR),
+        (int)(verts[j].normal.x * SCALE_FACTOR),
+        (int)(verts[j].normal.y * SCALE_FACTOR),
+        (int)(verts[j].normal.z * SCALE_FACTOR),
+        (int)(verts[j].color.x * SCALE_FACTOR),
+        (int)(verts[j].color.y * SCALE_FACTOR),
+        (int)(verts[j].color.z * SCALE_FACTOR),
         (int)(verts[j].tu * SCALE_FACTOR),
         (int)(verts[j].tv * SCALE_FACTOR));
     }
